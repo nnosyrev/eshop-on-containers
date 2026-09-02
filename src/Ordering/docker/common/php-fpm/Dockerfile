@@ -45,8 +45,7 @@ WORKDIR /var/www
 COPY . /var/www
 
 # Install Composer and dependencies
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 
 # Stage 2: Production environment
@@ -71,13 +70,12 @@ RUN curl -o /usr/local/bin/php-fpm-healthcheck \
 COPY ./docker/production/php-fpm/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# TODO: Copy the initial storage structure
-# COPY ./storage /var/www/storage-init
 
 # Copy PHP extensions and libraries from the builder stage
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
+COPY --from=builder /usr/local/bin/composer /usr/local/bin/
 
 # Use the recommended production PHP configuration
 # -----------------------------------------------------------

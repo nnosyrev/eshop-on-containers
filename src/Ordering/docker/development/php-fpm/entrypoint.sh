@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+composer install
+
 # Clear configurations to avoid caching issues in development
 echo "Clearing configurations..."
 # TODO: !!!
