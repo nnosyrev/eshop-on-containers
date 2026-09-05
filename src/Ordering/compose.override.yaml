@@ -1,0 +1,8 @@
+
+# TODO: Move what is needed to compose.dev.override.yaml and delete
+services:
+###> doctrine/doctrine-bundle ###
+  database:
+    ports:
+      - "5432"
+###< doctrine/doctrine-bundle ###
