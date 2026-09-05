@@ -2,9 +2,10 @@
 
 namespace App\Domain\Aggregate\Buyer;
 
+use App\Domain\Aggregate\AggregateRootInterface;
 use DateTime;
 
-class Buyer
+class Buyer implements AggregateRootInterface
 {
     private array $paymentMethods = [];
 

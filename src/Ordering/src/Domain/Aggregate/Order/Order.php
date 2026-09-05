@@ -2,10 +2,11 @@
 
 namespace App\Domain\Aggregate\Order;
 
+use App\Domain\Aggregate\AggregateRootInterface;
 use DateTime;
 use Exception;
 
-class Order
+class Order implements AggregateRootInterface
 {
     private DateTime $orderDate;
 
