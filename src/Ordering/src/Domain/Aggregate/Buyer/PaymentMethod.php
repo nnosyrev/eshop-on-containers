@@ -2,10 +2,11 @@
 
 namespace App\Domain\Aggregate\Buyer;
 
+use App\Domain\Aggregate\AbstractAggregate;
 use DateTime;
 use Exception;
 
-class PaymentMethod
+class PaymentMethod extends AbstractAggregate
 {
     public function __construct(
         private int $cardTypeId,

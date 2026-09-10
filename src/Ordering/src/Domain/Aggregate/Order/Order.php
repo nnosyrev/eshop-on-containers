@@ -2,11 +2,12 @@
 
 namespace App\Domain\Aggregate\Order;
 
+use App\Domain\Aggregate\AbstractAggregate;
 use App\Domain\Aggregate\AggregateRootInterface;
 use DateTime;
 use Exception;
 
-class Order implements AggregateRootInterface
+class Order extends AbstractAggregate implements AggregateRootInterface
 {
     private DateTime $orderDate;
 
@@ -26,7 +27,7 @@ class Order implements AggregateRootInterface
         string $cardHolderName,
         DateTime $cardExpiration,
         public readonly ?int $buyerId = null,
-        public readonly ?int $paymentId = null,
+        public readonly ?int $paymentMethodId = null,
     ) {
         $this->orderDate = new DateTime();
         $this->orderStatus = OrderStatus::Submitted;
@@ -45,10 +46,10 @@ class Order implements AggregateRootInterface
         $this->orderItems[] = $orderItem;
     }
 
-    public function setPaymentMethodVerified(int $buyerId, int $paymentId): void
+    public function setPaymentMethodVerified(int $buyerId, int $paymentMethodId): void
     {
         $this->buyerId = $buyerId;
-        $this->paymentId = $paymentId;
+        $this->paymentMethodId = $paymentMethodId;
     }
 
     public function setAwaitingValidationStatus(): void

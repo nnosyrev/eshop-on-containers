@@ -2,9 +2,10 @@
 
 namespace App\Domain\Aggregate\Order;
 
+use App\Domain\Aggregate\AbstractAggregate;
 use Exception;
 
-class OrderItem
+class OrderItem extends AbstractAggregate
 {
     public function __construct(
         public readonly int $productId,
