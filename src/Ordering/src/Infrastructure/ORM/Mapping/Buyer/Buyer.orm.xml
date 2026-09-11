@@ -8,6 +8,8 @@
         </id>
         <field name="identityGuid" type="string" length="200" column="identity_guid" unique="true"/>
         <field name="name" type="string" column="name" nullable="true"/>
+
+        <one-to-many field="paymentMethods" target-entity="PaymentMethod" mapped-by="buyer"/>
     </entity>
 </doctrine-mapping>
 
