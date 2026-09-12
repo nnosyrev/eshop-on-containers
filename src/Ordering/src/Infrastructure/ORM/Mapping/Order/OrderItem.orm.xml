@@ -1,0 +1,21 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="App\Domain\Aggregate\Order\OrderItem" table="order_item">
+        <id name="id" type="integer" column="id">
+            <generator strategy="SEQUENCE"/>
+        </id>
+        <field name="productId" type="integer" column="product_id"/>
+        <field name="discount" type="decimal" precision="10" scale="2" column="discount"/>
+        <field name="pictureUrl" type="string" column="picture_url" nullable="true"/>
+        <field name="productName" type="string" column="product_name"/>
+        <field name="unitPrice" type="decimal" precision="10" scale="2" column="unit_price"/>
+        <field name="units" type="integer" column="units"/>
+
+        <many-to-one field="order" target-entity="Order">
+            <join-column name="order_id" referenced-column-name="id" nullable="false"/>
+        </many-to-one>
+    </entity>
+</doctrine-mapping>
+

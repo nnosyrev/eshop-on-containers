@@ -6,7 +6,6 @@
         <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
-        <field name="cardTypeId" type="integer" column="card_type_id"/>
         <field name="alias" type="string" column="alias" length="200"/>
         <field name="cardHolderName" type="string" column="card_holder_name" length="200"/>
         <field name="cardNumber" type="string" column="card_number" length="25"/>
@@ -14,6 +13,10 @@
 
         <many-to-one field="buyer" target-entity="Buyer">
             <join-column name="buyer_id" referenced-column-name="id" nullable="false"/>
+        </many-to-one>
+
+        <many-to-one field="cardType" target-entity="CardType">
+            <join-column name="card_type_id" referenced-column-name="id" nullable="false"/>
         </many-to-one>
     </entity>
 </doctrine-mapping>

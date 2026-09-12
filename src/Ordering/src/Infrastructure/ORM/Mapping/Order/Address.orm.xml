@@ -1,0 +1,13 @@
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <embeddable name="App\Domain\Aggregate\Order\Address">
+        <field name="street" type="string" column="street" nullable="true"/>
+        <field name="city" type="string" column="city" nullable="true"/>
+        <field name="state" type="string" column="state" nullable="true"/>
+        <field name="country" type="string" column="country" nullable="true"/>
+        <field name="zipCode" type="string" column="zipcode" nullable="true"/>
+    </embeddable>
+</doctrine-mapping>
+

@@ -4,6 +4,8 @@ namespace App\Domain\Aggregate\Order;
 
 use App\Domain\Aggregate\AbstractAggregate;
 use App\Domain\Aggregate\AggregateRootInterface;
+use App\Domain\Aggregate\Buyer\Buyer;
+use App\Domain\Aggregate\Buyer\PaymentMethod;
 use DateTime;
 use Exception;
 
@@ -16,6 +18,9 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     private string $description;
 
     private array $orderItems = [];
+
+    private Buyer $buyer;
+    private PaymentMethod $paymentMethod;
 
     public function __construct(
         string $userId,

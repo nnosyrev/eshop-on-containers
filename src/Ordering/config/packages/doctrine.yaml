@@ -20,6 +20,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Infrastructure/ORM/Mapping/Buyer'
                 prefix: 'App\Domain\Aggregate\Buyer'
                 alias: App
+            Order:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Infrastructure/ORM/Mapping/Order'
+                prefix: 'App\Domain\Aggregate\Order'
+                alias: App
 
 when@test:
     doctrine:

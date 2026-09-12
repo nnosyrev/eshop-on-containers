@@ -7,6 +7,8 @@ use Exception;
 
 class OrderItem extends AbstractAggregate
 {
+    private Order $order;
+
     public function __construct(
         public readonly int $productId,
         public readonly string $productName,
