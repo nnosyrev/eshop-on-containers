@@ -5,7 +5,7 @@ namespace App\Api\Query;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-final class OrderQueries implements OrderQueriesInterface
+final readonly class OrderQueries implements OrderQueriesInterface
 {
     public function __construct(private Connection $conn) {}
 

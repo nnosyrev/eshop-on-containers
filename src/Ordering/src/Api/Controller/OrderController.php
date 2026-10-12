@@ -37,7 +37,7 @@ final class OrderController extends AbstractController
         return $this->json($order);
     }
 
-    #[Route('/', methods: ['GET'], requirements: ['id' => '\d+'], name: 'app_order_by_user')]
+    #[Route('/', methods: ['GET'], requirements: ['id' => '\d+'], name: 'app_orders_by_user')]
     #[OA\Response(
         response: 200,
         description: 'Returns the orders summary',
@@ -46,9 +46,12 @@ final class OrderController extends AbstractController
             items: new OA\Items(ref: new Model(type: OrderSummaryView::class))
         )
     )]
-    public function getOrderByUser(): JsonResponse
+    public function getOrdersByUser(): JsonResponse
     {
-        $orderSummariesData = $this->orderQueries->getOrdersFromUser('guid');
+        // TODO:
+        $userId = 'guid';
+
+        $orderSummariesData = $this->orderQueries->getOrdersFromUser($userId);
 
         $orderSummaries = $this->denormalizer->denormalize($orderSummariesData, OrderSummaryView::class . '[]');
 
