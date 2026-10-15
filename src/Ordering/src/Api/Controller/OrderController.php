@@ -75,4 +75,16 @@ final class OrderController extends AbstractController
 
         return $this->json($cardTypes);
     }
+
+    #[Route('/draft', methods: ['POST'], name: 'app_create_draft')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the card types'
+    )]
+    public function createOrderDraft(): JsonResponse
+    {
+        // ...
+
+        return $this->json([]);
+    }
 }
