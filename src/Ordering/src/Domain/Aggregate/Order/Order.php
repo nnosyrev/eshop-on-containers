@@ -6,6 +6,12 @@ use App\Domain\Aggregate\AbstractAggregate;
 use App\Domain\Aggregate\AggregateRootInterface;
 use App\Domain\Aggregate\Buyer\Buyer;
 use App\Domain\Aggregate\Buyer\PaymentMethod;
+use App\Domain\DomainEvent\OrderCancelledDomainEvent;
+use App\Domain\DomainEvent\OrderShippedDomainEvent;
+use App\Domain\DomainEvent\OrderStartedDomainEvent;
+use App\Domain\DomainEvent\OrderStatusChangedToAwaitingValidationDomainEvent;
+use App\Domain\DomainEvent\OrderStatusChangedToPaidDomainEvent;
+use App\Domain\DomainEvent\OrderStatusChangedToStockConfirmedDomainEvent;
 use DateTime;
 use Exception;
 
@@ -17,6 +23,9 @@ class Order extends AbstractAggregate implements AggregateRootInterface
 
     private string $description;
 
+    /**
+     * @var OrderItem[]
+     */
     private array $orderItems = [];
 
     private Buyer $buyer;
@@ -36,6 +45,19 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     ) {
         $this->orderDate = new DateTime();
         $this->orderStatus = OrderStatus::Submitted;
+
+        $orderStartedDomainEvent = new OrderStartedDomainEvent(
+            $this,
+            $userId,
+            $userName,
+            $cardTypeId,
+            $cardNumber,
+            $cardSecurityNumber,
+            $cardHolderName,
+            $cardExpiration
+        );
+
+        $this->addDomainEvent($orderStartedDomainEvent);
     }
 
     public function addOrderItem(
@@ -60,7 +82,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     public function setAwaitingValidationStatus(): void
     {
         if ($this->orderStatus === OrderStatus::Submitted) {
-            // AddDomainEvent
+            $this->addDomainEvent(new OrderStatusChangedToAwaitingValidationDomainEvent($this->id, $this->orderItems));
 
             $this->orderStatus = OrderStatus::AwaitingValidation;
         }
@@ -69,7 +91,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     public function setStockConfirmedStatus(): void
     {
         if ($this->orderStatus === OrderStatus::AwaitingValidation) {
-            // AddDomainEvent
+            $this->addDomainEvent(new OrderStatusChangedToStockConfirmedDomainEvent($this->id));
 
             $this->orderStatus = OrderStatus::StockConfirmed;
             $this->description = 'All the items were confirmed with available stock.';
@@ -79,7 +101,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     public function setPaidStatus(): void
     {
         if ($this->orderStatus === OrderStatus::StockConfirmed) {
-            // AddDomainEvent
+            $this->addDomainEvent(new OrderStatusChangedToPaidDomainEvent($this->id, $this->orderItems));
 
             $this->orderStatus = OrderStatus::Paid;
             $this->description = 'The payment was performed at a simulated "American Bank checking bank account ending on XX35071"';
@@ -95,7 +117,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
         $this->orderStatus = OrderStatus::Shipped;
         $this->description = 'The order was shipped.';
 
-        // AddDomainEvent
+        $this->addDomainEvent(new OrderShippedDomainEvent($this));
     }
 
     public function setCancelledStatus(): void
@@ -107,11 +129,11 @@ class Order extends AbstractAggregate implements AggregateRootInterface
         $this->orderStatus = OrderStatus::Cancelled;
         $this->description = 'The order was cancelled.';
 
-        // AddDomainEvent
+        $this->addDomainEvent(new OrderCancelledDomainEvent($this));
     }
 
     private function statusChangeException(OrderStatus $orderStatusToChange): void
     {
-        throw new Exception(sprintf('Is not possible to change the order status from %s to %s.', $this->orderStatus->value, $orderStatusToChange->value));
+        throw new Exception(\sprintf('Is not possible to change the order status from %s to %s.', $this->orderStatus->value, $orderStatusToChange->value));
     }
 }

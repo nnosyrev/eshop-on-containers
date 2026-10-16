@@ -2,7 +2,7 @@
 
 namespace App\Domain\Aggregate\Order;
 
-interface OrderRepository
+interface OrderRepositoryInterface
 {
     public function add(Order $order): Order;
 

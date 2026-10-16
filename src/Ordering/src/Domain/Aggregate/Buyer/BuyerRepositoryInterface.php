@@ -2,7 +2,7 @@
 
 namespace App\Domain\Aggregate\Buyer;
 
-interface BuyerRepository
+interface BuyerRepositoryInterface
 {
     public function add(Buyer $buyer): Buyer;
 
