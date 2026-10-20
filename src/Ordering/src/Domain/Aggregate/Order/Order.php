@@ -69,7 +69,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
         string $pictureUrl,
         int $units = 1
     ): void {
-        $orderItem = new OrderItem($productId, $productName, $unitPrice, $discount, $pictureUrl, $units);
+        $orderItem = new OrderItem($this, $productId, $productName, $unitPrice, $discount, $pictureUrl, $units);
 
         $this->orderItems[] = $orderItem;
     }
