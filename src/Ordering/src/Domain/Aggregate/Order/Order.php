@@ -13,11 +13,12 @@ use App\Domain\DomainEvent\OrderStatusChangedToAwaitingValidationDomainEvent;
 use App\Domain\DomainEvent\OrderStatusChangedToPaidDomainEvent;
 use App\Domain\DomainEvent\OrderStatusChangedToStockConfirmedDomainEvent;
 use DateTime;
+use DateTimeImmutable;
 use Exception;
 
 class Order extends AbstractAggregate implements AggregateRootInterface
 {
-    private DateTime $orderDate;
+    private DateTimeImmutable $orderDate;
 
     private OrderStatus $orderStatus;
 
@@ -26,7 +27,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     /**
      * @var OrderItem[]
      */
-    private array $orderItems = [];
+    private iterable $orderItems = [];
 
     private Buyer $buyer;
     private PaymentMethod $paymentMethod;
@@ -39,11 +40,11 @@ class Order extends AbstractAggregate implements AggregateRootInterface
         string $cardNumber,
         string $cardSecurityNumber,
         string $cardHolderName,
-        DateTime $cardExpiration,
+        DateTimeImmutable $cardExpiration,
         public readonly ?int $buyerId = null,
         public readonly ?int $paymentMethodId = null,
     ) {
-        $this->orderDate = new DateTime();
+        $this->orderDate = new DateTimeImmutable();
         $this->orderStatus = OrderStatus::Submitted;
 
         $orderStartedDomainEvent = new OrderStartedDomainEvent(

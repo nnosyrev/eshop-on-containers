@@ -2,6 +2,8 @@
 
 namespace App\Api\Controller;
 
+use App\Api\Command\CreateOrderCommand;
+use App\Api\Command\CreateOrderCommandHandler;
 use App\Api\Query\OrderQueriesInterface;
 use App\Api\View\CardTypeView;
 use App\Api\View\OrderSummaryView;
@@ -10,6 +12,8 @@ use Nelmio\ApiDocBundle\Attribute\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
@@ -76,15 +80,21 @@ final class OrderController extends AbstractController
         return $this->json($cardTypes);
     }
 
-    #[Route('/draft', methods: ['POST'], name: 'app_create_draft')]
+    #[Route('/', methods: ['POST'], name: 'app_create_order')]
+    #[OA\RequestBody(
+        content: new Model(type: CreateOrderCommand::class)
+    )]
     #[OA\Response(
         response: 200,
-        description: 'Returns the card types'
+        description: 'The order has been created'
     )]
-    public function createOrderDraft(): JsonResponse
+    public function createOrder(
+        #[MapRequestPayload] CreateOrderCommand $command,
+        CreateOrderCommandHandler $createOrderCommandHandler,
+    ): Response
     {
-        // ...
+        $createOrderCommandHandler->handle($command);
 
-        return $this->json([]);
+        return new Response(status: 200);
     }
 }

@@ -6,13 +6,17 @@
         <id name="id" type="integer" column="id">
             <generator strategy="SEQUENCE"/>
         </id>
-        <field name="orderStatus" type="integer" column="order_status"/>
+        <field name="orderStatus" type="integer" column="order_status" enum-type="App\Domain\Aggregate\Order\OrderStatus"/>
         <field name="description" type="string" column="description" nullable="true"/>
         <field name="orderDate" type="datetime_immutable" column="order_date"/>
 
         <embedded name="address" class="Address"/>
 
-        <one-to-many field="orderItems" target-entity="OrderItem" mapped-by="order"/>
+        <one-to-many field="orderItems" target-entity="OrderItem" mapped-by="order">
+            <cascade>
+                <cascade-persist/>
+            </cascade>
+        </one-to-many>
 
         <many-to-one field="buyer" target-entity="App\Domain\Aggregate\Buyer\Buyer"/>
         <many-to-one field="paymentMethod" target-entity="App\Domain\Aggregate\Buyer\PaymentMethod"/>

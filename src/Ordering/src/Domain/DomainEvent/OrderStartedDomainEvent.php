@@ -4,6 +4,7 @@ namespace App\Domain\DomainEvent;
 
 use App\Domain\Aggregate\Order\Order;
 use DateTime;
+use DateTimeImmutable;
 
 /**
  * Event used when an order is created
@@ -18,6 +19,6 @@ final readonly class OrderStartedDomainEvent
         public string $cardNumber,
         public string $cardSecurityNumber,
         public string $cardHolderName,
-        public DateTime $cardExpiration,
+        public DateTimeImmutable $cardExpiration,
     ) {}
 }
