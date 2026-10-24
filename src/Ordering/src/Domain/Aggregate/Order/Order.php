@@ -12,7 +12,6 @@ use App\Domain\DomainEvent\OrderStartedDomainEvent;
 use App\Domain\DomainEvent\OrderStatusChangedToAwaitingValidationDomainEvent;
 use App\Domain\DomainEvent\OrderStatusChangedToPaidDomainEvent;
 use App\Domain\DomainEvent\OrderStatusChangedToStockConfirmedDomainEvent;
-use DateTime;
 use DateTimeImmutable;
 use Exception;
 
