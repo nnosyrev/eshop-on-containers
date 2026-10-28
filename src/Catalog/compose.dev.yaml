@@ -46,7 +46,7 @@ services:
       - catalog-development
 
   postgres:
-    image: postgres:16
+    image: pgvector/pgvector:pg16
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     environment:
@@ -55,7 +55,7 @@ services:
       # You should definitely change the password in production
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
     volumes:
-      - postgres-catalog-data-development:/var/lib/postgresql/data
+      - postgres-data-development:/var/lib/postgresql/data
     networks:
       - catalog-development
 
@@ -63,4 +63,4 @@ networks:
   catalog-development:
 
 volumes:
-  postgres-catalog-data-development:
+  postgres-data-development:
