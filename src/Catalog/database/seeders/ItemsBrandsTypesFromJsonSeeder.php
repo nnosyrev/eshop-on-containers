@@ -16,9 +16,9 @@ class ItemsBrandsTypesFromJsonSeeder extends Seeder
      */
     public function run(): void
     {
-        $rawJson = file_get_contents(config('app.catalog_seed_file'));
+        $json = file_get_contents(config('app.catalog_seed_file'));
 
-        $list = json_decode($rawJson);
+        $list = json_decode($json);
 
         DB::transaction(function () use ($list) {
             $types = [];
