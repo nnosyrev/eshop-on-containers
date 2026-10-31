@@ -123,4 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'catalog_seed_file' => base_path('setup/catalog.json'),
 ];
