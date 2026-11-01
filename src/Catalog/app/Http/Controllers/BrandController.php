@@ -8,7 +8,7 @@ use OpenApi\Attributes as OA;
 
 class BrandController extends Controller
 {
-    #[OA\Get(path: '/api/brands', summary: "List catalog item brands", tags: ['Brands'])]
+    #[OA\Get(path: '/api/brands', summary: 'List catalog item brands', tags: ['Brands'])]
     #[OA\Response(
         response: 200,
         description: 'OK',
