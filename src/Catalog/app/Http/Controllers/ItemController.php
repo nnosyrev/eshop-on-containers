@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ItemRequest;
 use App\Http\Resources\ItemResource;
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use OpenApi\Attributes as OA;
 
 class ItemController extends Controller
@@ -40,6 +42,31 @@ class ItemController extends Controller
     }
 
 
+    #[OA\Post(path: '/api/items', summary: 'Create a catalog item', tags: ['Items'])]
+    #[OA\RequestBody(
+        required: true,
+        description: 'New Item',
+        content: new OA\JsonContent(ref: ItemRequest::class)
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'OK',
+        content: new OA\JsonContent(ref: ItemResource::class)
+    )]
+    #[OA\Response(
+        response: 422,
+        description: 'Unprocessable Content'
+    )]
+    public function store(ItemRequest $request): ItemResource
+    {
+        $item = new Item();
+        $item->fill($request->validated());
+        $item->on_reorder = false;
+        $item->save();
+
+        return new ItemResource($item);
+    }
+
     #[OA\Get(path: '/api/items/{id}', summary: 'Get catalog item', tags: ['Items'])]
     #[OA\Response(
         response: 200,
@@ -56,5 +83,24 @@ class ItemController extends Controller
             ->firstOrFail();
 
         return new ItemResource($item);
+    }
+
+    #[OA\Delete(path: '/api/items/{id}', summary: 'Delete catalog item', tags: ['Items'])]
+    #[OA\Response(
+        response: 200,
+        description: 'OK',
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Not Found',
+    )]
+    public function destroy(#[OA\PathParameter] int $id): Response
+    {
+        $item = Item::where('id', '=', $id)
+            ->firstOrFail();
+
+        $item->delete();
+
+        return response('', 200);
     }
 }
