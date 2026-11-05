@@ -36,8 +36,8 @@ class ItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|max:50',
-            'description' => 'max:1024',
+            'name' => 'required|string|max:50',
+            'description' => 'string|max:1024|nullable',
             'price' => 'required|decimal:2',
             'type_id' => 'required|integer|exists:types,id',
             'brand_id' => 'required|integer|exists:brands,id',
