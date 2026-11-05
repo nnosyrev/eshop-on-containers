@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ItemRequest;
 use App\Http\Resources\ItemResource;
+use App\Models\Brand;
 use App\Models\Item;
+use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
@@ -68,6 +70,67 @@ class ItemController extends Controller
         $name = $request->query('name');
 
         $items = Item::whereLike('name', '%' . $name . '%')
+            ->orderBy('name')
+            ->paginate($perPage);
+
+        return ItemResource::collection($items);
+    }
+
+    #[OA\Get(path: '/api/items/type/{type}/brand/{brand}', summary: 'Get catalog items by type and brand', tags: ['Items'])]
+    #[OA\Parameter(name: 'page', in: 'query', required: true)]
+    #[OA\Parameter(name: 'per_page', in: 'query')]
+    #[OA\Response(
+        response: 200,
+        description: 'OK',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(
+                    property: 'data',
+                    type: 'array',
+                    items: new OA\Items(ref: ItemResource::class)
+                ),
+                new OA\Property(property: 'links', ref: '#/components/schemas/PaginatorLinks'),
+                new OA\Property(property: 'meta', ref: '#/components/schemas/PaginatorMeta'),
+            ]
+        )
+    )]
+    public function indexByTypeAndBrand(#[OA\PathParameter] Type $type, #[OA\PathParameter] Brand $brand, Request $request): ResourceCollection
+    {
+        $perPage = (int) $request->query('per_page', self::DEFAULT_PER_PAGE);
+
+        $items = Item::where('type_id', '=', $type->id)
+            ->where('brand_id', '=', $brand->id)
+            ->orderBy('name')
+            ->paginate($perPage);
+
+        return ItemResource::collection($items);
+    }
+
+    #[OA\Get(path: '/api/items/type/all/brand/{brand}', summary: 'List catalog items by brand', tags: ['Items'])]
+    #[OA\Parameter(name: 'page', in: 'query', required: true)]
+    #[OA\Parameter(name: 'per_page', in: 'query')]
+    #[OA\Response(
+        response: 200,
+        description: 'OK',
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(
+                    property: 'data',
+                    type: 'array',
+                    items: new OA\Items(ref: ItemResource::class)
+                ),
+                new OA\Property(property: 'links', ref: '#/components/schemas/PaginatorLinks'),
+                new OA\Property(property: 'meta', ref: '#/components/schemas/PaginatorMeta'),
+            ]
+        )
+    )]
+    public function indexByBrand(#[OA\PathParameter] Brand $brand, Request $request): ResourceCollection
+    {
+        $perPage = (int) $request->query('per_page', self::DEFAULT_PER_PAGE);
+
+        $items = Item::where('brand_id', '=', $brand->id)
             ->orderBy('name')
             ->paginate($perPage);
 
