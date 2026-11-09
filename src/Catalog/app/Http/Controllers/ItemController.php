@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ItemRequest;
+use App\Http\Resources\FacetsResource;
 use App\Http\Resources\ItemResource;
 use App\Models\Brand;
 use App\Models\Item;
@@ -10,6 +11,7 @@ use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use OpenApi\Attributes as OA;
 
 class ItemController extends Controller
@@ -207,6 +209,72 @@ class ItemController extends Controller
             ->get();
 
         return ItemResource::collection($items);
+    }
+
+    #[OA\Get(path: '/api/items/facets', summary: 'Get catalog facet counts', tags: ['Items'])]
+    #[OA\Parameter(
+        name: 'type_ids[]',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(
+            type: 'array',
+            items: new OA\Items(type: 'integer')
+        )
+    )]
+    #[OA\Parameter(
+        name: 'brand_ids[]',
+        in: 'query',
+        required: false,
+        schema: new OA\Schema(
+            type: 'array',
+            items: new OA\Items(type: 'integer')
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'OK',
+        content: new OA\JsonContent(ref: FacetsResource::class)
+    )]
+    public function facets(Request $request): FacetsResource
+    {
+        // Brand
+        $brandCountsBuilder = DB::table('items')
+             ->selectRaw('brand_id as id, count(*) as count')
+             ->groupBy('brand_id');
+
+        $typeIds = (array) $request->query('type_ids', []);
+        if (!empty($typeIds)) {
+            $brandCountsBuilder->whereIn('type_id', $typeIds);
+        }
+
+        $brandCounts = $brandCountsBuilder->get();
+
+        $brandTotal = $brandCounts->sum(function($item) {
+            return $item->count;
+        });
+
+        // Type
+        $typeCountsBuilder = DB::table('items')
+             ->selectRaw('type_id as id, count(*) as count')
+             ->groupBy('type_id');
+
+        $brandIds = (array) $request->query('brand_ids', []);
+        if (!empty($brandIds)) {
+            $typeCountsBuilder->whereIn('brand_id', $brandIds);
+        }
+
+        $typeCounts = $typeCountsBuilder->get();
+
+        $typeTotal = $typeCounts->sum(function($item) {
+            return $item->count;
+        });
+
+        return new FacetsResource(null)
+            ->setBrandCounts($brandCounts->toArray())
+            ->setTypeCounts($typeCounts->toArray())
+            ->setBrandTotal($brandTotal)
+            ->setTypeTotal($typeTotal)
+        ;
     }
 
     #[OA\Delete(path: '/api/items/{id}', summary: 'Delete catalog item', tags: ['Items'])]

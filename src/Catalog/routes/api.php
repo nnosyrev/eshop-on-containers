@@ -13,4 +13,5 @@ Route::get('items/by/ids', [ItemController::class, 'showByIds'])->name('items.sh
 Route::get('items/by/name', [ItemController::class, 'indexByName'])->name('items.indexByName');
 Route::get('items/type/all/brand/{brand}', [ItemController::class, 'indexByBrand'])->name('items.indexByBrand');
 Route::get('items/type/{type}/brand/{brand}', [ItemController::class, 'indexByTypeAndBrand'])->name('items.indexByTypeAndBrand');
+Route::get('items/facets', [ItemController::class, 'facets'])->name('items.facets');
 Route::apiResource('items', ItemController::class)->only(['index', 'store', 'show', 'destroy']);
