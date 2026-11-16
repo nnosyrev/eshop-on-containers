@@ -14,17 +14,11 @@ doctrine:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
         mappings:
-            Buyer:
+            App:
+                type: attribute
                 is_bundle: false
-                type: xml
-                dir: '%kernel.project_dir%/src/Infrastructure/ORM/Mapping/Buyer'
-                prefix: 'App\Domain\Aggregate\Buyer'
-                alias: App
-            Order:
-                is_bundle: false
-                type: xml
-                dir: '%kernel.project_dir%/src/Infrastructure/ORM/Mapping/Order'
-                prefix: 'App\Domain\Aggregate\Order'
+                dir: '%kernel.project_dir%/src/Infrastructure/ORM/Entity'
+                prefix: 'App\Infrastructure\ORM\Entity'
                 alias: App
 
 when@test:
