@@ -7,10 +7,7 @@ use Exception;
 
 class OrderItem extends AbstractAggregate
 {
-    private Order $order;
-
     public function __construct(
-        Order $order,
         public readonly int $productId,
         public readonly string $productName,
         // TODO: have to be decimal
@@ -26,8 +23,6 @@ class OrderItem extends AbstractAggregate
         if (($unitPrice * $units) < $discount) {
             throw new Exception('The total of order item is lower than applied discount');
         }
-
-        $this->order = $order;
     }
 
     public function setDiscount(float $discount): void

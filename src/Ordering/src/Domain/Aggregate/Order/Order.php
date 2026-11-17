@@ -4,8 +4,6 @@ namespace App\Domain\Aggregate\Order;
 
 use App\Domain\Aggregate\AbstractAggregate;
 use App\Domain\Aggregate\AggregateRootInterface;
-use App\Domain\Aggregate\Buyer\Buyer;
-use App\Domain\Aggregate\Buyer\PaymentMethod;
 use App\Domain\DomainEvent\OrderCancelledDomainEvent;
 use App\Domain\DomainEvent\OrderShippedDomainEvent;
 use App\Domain\DomainEvent\OrderStartedDomainEvent;
@@ -27,9 +25,6 @@ class Order extends AbstractAggregate implements AggregateRootInterface
      * @var OrderItem[]
      */
     private iterable $orderItems = [];
-
-    private Buyer $buyer;
-    private PaymentMethod $paymentMethod;
 
     public function __construct(
         string $userId,
@@ -68,7 +63,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
         string $pictureUrl,
         int $units = 1
     ): void {
-        $orderItem = new OrderItem($this, $productId, $productName, $unitPrice, $discount, $pictureUrl, $units);
+        $orderItem = new OrderItem($productId, $productName, $unitPrice, $discount, $pictureUrl, $units);
 
         $this->orderItems[] = $orderItem;
     }

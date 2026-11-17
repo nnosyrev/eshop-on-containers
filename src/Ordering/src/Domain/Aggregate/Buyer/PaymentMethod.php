@@ -8,9 +8,6 @@ use Exception;
 
 class PaymentMethod extends AbstractAggregate
 {
-    private Buyer $buyer;
-    private CardType $cardType;
-
     public function __construct(
         private int $cardTypeId,
         private string $alias,
