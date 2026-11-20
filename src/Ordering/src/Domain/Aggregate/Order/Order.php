@@ -15,11 +15,15 @@ use Exception;
 
 class Order extends AbstractAggregate implements AggregateRootInterface
 {
-    private DateTimeImmutable $orderDate;
+    public readonly DateTimeImmutable $orderDate;
 
-    private OrderStatus $orderStatus;
+    public OrderStatus $orderStatus {
+        get => $this->orderStatus;
+    }
 
-    private string $description;
+    public ?string $description = '' {
+        get => $this->description;
+    }
 
     /**
      * @var OrderItem[]
@@ -130,5 +134,10 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     private function statusChangeException(OrderStatus $orderStatusToChange): void
     {
         throw new Exception(\sprintf('Is not possible to change the order status from %s to %s.', $this->orderStatus->value, $orderStatusToChange->value));
+    }
+
+    public function getOrderItems(): iterable
+    {
+        return $this->orderItems;
     }
 }

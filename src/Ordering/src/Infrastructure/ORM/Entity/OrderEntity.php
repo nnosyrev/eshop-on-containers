@@ -2,6 +2,9 @@
 
 namespace App\Infrastructure\ORM\Entity;
 
+use App\Domain\Aggregate\Order\Order;
+use App\Domain\Aggregate\Order\OrderStatus;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,8 +17,8 @@ class OrderEntity
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $orderStatus = null;
+    #[ORM\Column(enumType: OrderStatus::class)]
+    private OrderStatus $orderStatus;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
@@ -30,22 +33,48 @@ class OrderEntity
     private Collection $orderItems;
 
     #[ORM\ManyToOne(targetEntity: BuyerEntity::class)]
-    private BuyerEntity $buyer;
+    private ?BuyerEntity $buyer;
 
     #[ORM\ManyToOne(targetEntity: PaymentMethodEntity::class)]
-    private PaymentMethodEntity $paymentMethod;
+    private ?PaymentMethodEntity $paymentMethod;
+
+    public function __construct()
+    {
+        $this->orderItems = new ArrayCollection();
+    }
+
+    public static function createFromAggregate(
+        Order $order,
+        ?BuyerEntity $buyerEntity,
+        ?PaymentMethodEntity $paymentMethodEntity
+    ): self {
+        $orderEntity = new self()
+            ->setOrderDate($order->orderDate)
+            ->setOrderStatus($order->orderStatus)
+            ->setDescription($order->description)
+            ->setAddress(Address::createFromAggregate($order->address))
+            ->setBuyer($buyerEntity)
+            ->setPaymentMethod($paymentMethodEntity)
+        ;
+
+        foreach ($order->getOrderItems() as $orderItem) {
+            $orderEntity->addOrderItem(OrderItemEntity::createFromAggregate($orderItem, $orderEntity));
+        }
+
+        return $orderEntity;
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getOrderStatus(): ?int
+    public function getOrderStatus(): OrderStatus
     {
         return $this->orderStatus;
     }
 
-    public function setOrderStatus(int $orderStatus): static
+    public function setOrderStatus(OrderStatus $orderStatus): static
     {
         $this->orderStatus = $orderStatus;
 
@@ -81,11 +110,49 @@ class OrderEntity
         return $this->address;
     }
 
+    public function setAddress(Address $address): static
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, OrderItemEntity>
      */
     public function getOrderItems(): Collection
     {
         return $this->orderItems;
+    }
+
+    public function addOrderItem(OrderItemEntity $orderItemEntity): self
+    {
+        $this->orderItems->add($orderItemEntity);
+
+        return $this;
+    }
+
+    public function getBuyer(): ?BuyerEntity
+    {
+        return $this->buyer;
+    }
+
+    public function setBuyer(?BuyerEntity $buyerEntity): self
+    {
+        $this->buyer = $buyerEntity;
+
+        return $this;
+    }
+
+    public function getPaymentMethod(): ?PaymentMethodEntity
+    {
+        return $this->paymentMethod;
+    }
+
+    public function setPaymentMethod(?PaymentMethodEntity $paymentMethodEntity): self
+    {
+        $this->paymentMethod = $paymentMethodEntity;
+
+        return $this;
     }
 }

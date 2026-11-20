@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\ORM\Entity;
 
+use App\Domain\Aggregate\Order\Address as OrderAddress;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Embeddable]
@@ -19,4 +20,15 @@ final readonly class Address
         #[ORM\Column(name: 'zipcode', nullable: true)]
         public string $zipCode,
     ) {}
+
+    public static function createFromAggregate(OrderAddress $orderAddress): self
+    {
+        return new self(
+            $orderAddress->street,
+            $orderAddress->city,
+            $orderAddress->state,
+            $orderAddress->country,
+            $orderAddress->zipCode,
+        );
+    }
 }

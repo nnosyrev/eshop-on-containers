@@ -12,7 +12,7 @@ class OrderItem extends AbstractAggregate
         public readonly string $productName,
         // TODO: have to be decimal
         public readonly float $unitPrice,
-        public float $discount,
+        public readonly float $discount,
         public readonly string $pictureUrl,
         public readonly int $units = 1
     ) {

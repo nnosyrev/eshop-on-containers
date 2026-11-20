@@ -4,6 +4,9 @@ namespace App\Infrastructure\Repository;
 
 use App\Domain\Aggregate\Order\Order;
 use App\Domain\Aggregate\Order\OrderRepositoryInterface;
+use App\Infrastructure\ORM\Entity\BuyerEntity;
+use App\Infrastructure\ORM\Entity\OrderEntity;
+use App\Infrastructure\ORM\Entity\PaymentMethodEntity;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class OrderRepository implements OrderRepositoryInterface
@@ -14,7 +17,17 @@ final readonly class OrderRepository implements OrderRepositoryInterface
 
     public function add(Order $order): Order
     {
-        $this->em->persist($order);
+        $orderEntity = OrderEntity::createFromAggregate(
+            $order,
+            $order->buyerId ? $this->em->getReference(BuyerEntity::class, $order->buyerId) : null,
+            $order->paymentMethodId ? $this->em->getReference(PaymentMethodEntity::class, $order->paymentMethodId) : null,
+        );
+
+        foreach ($orderEntity->getOrderItems() as $orderItemEntity) {
+            $this->em->persist($orderItemEntity);
+        }
+
+        $this->em->persist($orderEntity);
         $this->em->flush();
 
         return $order;
