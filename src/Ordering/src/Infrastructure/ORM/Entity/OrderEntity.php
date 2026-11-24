@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\ORM\Entity;
 
-use App\Domain\Aggregate\Order\Order;
 use App\Domain\Aggregate\Order\OrderStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -41,28 +40,6 @@ class OrderEntity
     public function __construct()
     {
         $this->orderItems = new ArrayCollection();
-    }
-
-    public static function createFromAggregate(
-        Order $order,
-        ?BuyerEntity $buyerEntity,
-        ?PaymentMethodEntity $paymentMethodEntity
-    ): self {
-        $orderEntity = new self()
-            ->setId($order->id)
-            ->setOrderDate($order->orderDate)
-            ->setOrderStatus($order->orderStatus)
-            ->setDescription($order->description)
-            ->setAddress(Address::createFromAggregate($order->address))
-            ->setBuyer($buyerEntity)
-            ->setPaymentMethod($paymentMethodEntity)
-        ;
-
-        foreach ($order->getOrderItems() as $orderItem) {
-            $orderEntity->addOrderItem(OrderItemEntity::createFromAggregate($orderItem, $orderEntity));
-        }
-
-        return $orderEntity;
     }
 
     public function getId(): ?int

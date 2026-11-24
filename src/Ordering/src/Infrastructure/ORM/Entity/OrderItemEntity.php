@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\ORM\Entity;
 
-use App\Domain\Aggregate\Order\OrderItem;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -36,20 +35,6 @@ class OrderItemEntity
     #[ORM\ManyToOne(targetEntity: OrderEntity::class, inversedBy: 'orderItems')]
     #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', nullable: false)]
     private OrderEntity $order;
-
-    public static function createFromAggregate(OrderItem $orderItem, OrderEntity $orderEntity): self
-    {
-        return new self()
-            ->setId($orderItem->id)
-            ->setProductId($orderItem->productId)
-            ->setDiscount($orderItem->discount)
-            ->setPictureUrl($orderItem->pictureUrl)
-            ->setProductName($orderItem->productName)
-            ->setUnitPrice($orderItem->unitPrice)
-            ->setUnits($orderItem->units)
-            ->setOrder($orderEntity)
-        ;
-    }
 
     public function getId(): ?int
     {
