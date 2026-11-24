@@ -106,7 +106,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     public function setShippedStatus(): void
     {
         if ($this->orderStatus !== OrderStatus::Paid) {
-            //$this->statusChangeException(OrderStatus::Shipped);
+            $this->statusChangeException(OrderStatus::Shipped);
         }
 
         $this->orderStatus = OrderStatus::Shipped;
