@@ -8,5 +8,5 @@ interface OrderRepositoryInterface
 
     public function update(Order $order): Order;
 
-    public function findById(int $id): Order;
+    public function findById(int $id): ?Order;
 }

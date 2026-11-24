@@ -49,6 +49,7 @@ class OrderEntity
         ?PaymentMethodEntity $paymentMethodEntity
     ): self {
         $orderEntity = new self()
+            ->setId($order->id)
             ->setOrderDate($order->orderDate)
             ->setOrderStatus($order->orderStatus)
             ->setDescription($order->description)
@@ -67,6 +68,13 @@ class OrderEntity
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(?int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getOrderStatus(): OrderStatus

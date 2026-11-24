@@ -4,7 +4,7 @@ namespace App\Domain\Aggregate;
 
 abstract class AbstractAggregate
 {
-    protected ?int $id = null;
+    public protected(set) ?int $id = null;
 
     protected array $domainEvents = [];
 

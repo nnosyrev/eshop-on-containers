@@ -16,8 +16,8 @@ final readonly class OrderQueries implements OrderQueriesInterface
             o.address_city as city, o.address_country as country, o.address_state as state, o.address_street as street, o.address_zipcode as zipcode,
             o.order_status as status,
             SUM(oi.units * oi.unit_price) as total
-            FROM "order" o
-            LEFT JOIN order_item oi ON o.id = oi.order_id
+            FROM orders o
+            LEFT JOIN order_items oi ON o.id = oi.order_id
             WHERE o.id = :id
             GROUP BY o.id',
             ['id' => $id]
@@ -29,7 +29,7 @@ final readonly class OrderQueries implements OrderQueriesInterface
 
         $orderItemsData = $this->conn->fetchAllAssociative(
             'SELECT oi.product_name, oi.units, oi.unit_price, oi.picture_url
-            FROM order_item oi
+            FROM order_items oi
             WHERE oi.order_id = :id',
             ['id' => $id]
         );
@@ -43,9 +43,9 @@ final readonly class OrderQueries implements OrderQueriesInterface
     {
         return $this->conn->fetchAllAssociative(
             'SELECT o.id as order_number, o.order_date as date, o.order_status as status, SUM(oi.units * oi.unit_price) as total
-            FROM "order" o
-            LEFT JOIN order_item oi ON  o.id = oi.order_id
-            LEFT JOIN buyer ob on o.buyer_id = ob.id
+            FROM orders o
+            LEFT JOIN order_items oi ON  o.id = oi.order_id
+            LEFT JOIN buyers ob on o.buyer_id = ob.id
             WHERE ob.identity_guid = :user_id
             GROUP BY o.id, o.order_date, o.order_status
             ORDER BY o.id',
@@ -55,6 +55,6 @@ final readonly class OrderQueries implements OrderQueriesInterface
 
     public function getCardTypes(): array
     {
-        return $this->conn->fetchAllAssociative('SELECT id, name FROM card_type');
+        return $this->conn->fetchAllAssociative('SELECT id, name FROM card_types');
     }
 }

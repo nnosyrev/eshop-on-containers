@@ -23,8 +23,6 @@ final readonly class CreateOrderCommandHandler
 
         $this->orderRepository->add($order);
 
-        // TODO: Should we save the repository ?
-
         return true;
     }
 }

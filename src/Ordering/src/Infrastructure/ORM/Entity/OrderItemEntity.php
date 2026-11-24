@@ -40,6 +40,7 @@ class OrderItemEntity
     public static function createFromAggregate(OrderItem $orderItem, OrderEntity $orderEntity): self
     {
         return new self()
+            ->setId($orderItem->id)
             ->setProductId($orderItem->productId)
             ->setDiscount($orderItem->discount)
             ->setPictureUrl($orderItem->pictureUrl)
@@ -53,6 +54,13 @@ class OrderItemEntity
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(?int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getProductId(): ?int

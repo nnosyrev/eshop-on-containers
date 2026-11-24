@@ -4,6 +4,8 @@ namespace App\Api\Controller;
 
 use App\Api\Command\CreateOrderCommand;
 use App\Api\Command\CreateOrderCommandHandler;
+use App\Api\Command\ShipOrderCommand;
+use App\Api\Command\ShipOrderCommandHandler;
 use App\Api\Query\OrderQueriesInterface;
 use App\Api\View\CardTypeView;
 use App\Api\View\OrderSummaryView;
@@ -94,6 +96,24 @@ final class OrderController extends AbstractController
     ): Response
     {
         $createOrderCommandHandler->handle($command);
+
+        return new Response(status: 200);
+    }
+
+    #[Route('/ship', methods: ['PUT'], name: 'app_ship_order')]
+    #[OA\RequestBody(
+        content: new Model(type: ShipOrderCommand::class)
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'The order has been shipped'
+    )]
+    public function shipOrder(
+        #[MapRequestPayload] ShipOrderCommand $command,
+        ShipOrderCommandHandler $shipOrderCommandHandler,
+    ): Response
+    {
+        $shipOrderCommandHandler->handle($command);
 
         return new Response(status: 200);
     }

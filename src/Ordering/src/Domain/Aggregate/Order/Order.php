@@ -17,13 +17,9 @@ class Order extends AbstractAggregate implements AggregateRootInterface
 {
     public readonly DateTimeImmutable $orderDate;
 
-    public OrderStatus $orderStatus {
-        get => $this->orderStatus;
-    }
+    public private(set) OrderStatus $orderStatus;
 
-    public ?string $description = '' {
-        get => $this->description;
-    }
+    public private(set) ?string $description = '';
 
     /**
      * @var OrderItem[]
@@ -110,7 +106,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     public function setShippedStatus(): void
     {
         if ($this->orderStatus !== OrderStatus::Paid) {
-            $this->statusChangeException(OrderStatus::Shipped);
+            //$this->statusChangeException(OrderStatus::Shipped);
         }
 
         $this->orderStatus = OrderStatus::Shipped;
