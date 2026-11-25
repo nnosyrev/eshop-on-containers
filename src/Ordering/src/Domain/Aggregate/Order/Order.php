@@ -24,7 +24,7 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     /**
      * @var OrderItem[]
      */
-    private iterable $orderItems = [];
+    public private(set) iterable $orderItems = [];
 
     public function __construct(
         string $userId,
@@ -130,10 +130,5 @@ class Order extends AbstractAggregate implements AggregateRootInterface
     private function statusChangeException(OrderStatus $orderStatusToChange): void
     {
         throw new Exception(\sprintf('Is not possible to change the order status from %s to %s.', $this->orderStatus->value, $orderStatusToChange->value));
-    }
-
-    public function getOrderItems(): iterable
-    {
-        return $this->orderItems;
     }
 }

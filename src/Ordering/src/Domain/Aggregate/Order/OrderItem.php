@@ -12,9 +12,9 @@ class OrderItem extends AbstractAggregate
         public readonly string $productName,
         // TODO: have to be decimal
         public readonly float $unitPrice,
-        public readonly float $discount,
+        public private(set) float $discount,
         public readonly string $pictureUrl,
-        public readonly int $units = 1
+        public private(set) int $units = 1
     ) {
         if ($units <= 0) {
             throw new Exception('Invalid number of units');

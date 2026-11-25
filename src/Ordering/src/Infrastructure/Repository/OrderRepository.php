@@ -5,9 +5,7 @@ namespace App\Infrastructure\Repository;
 use App\Domain\Aggregate\Order\Order;
 use App\Domain\Aggregate\Order\OrderRepositoryInterface;
 use App\Infrastructure\Mapper\OrderMapper;
-use App\Infrastructure\ORM\Entity\BuyerEntity;
 use App\Infrastructure\ORM\Entity\OrderEntity;
-use App\Infrastructure\ORM\Entity\PaymentMethodEntity;
 use Doctrine\ORM\EntityManagerInterface;
 
 final readonly class OrderRepository implements OrderRepositoryInterface
@@ -19,11 +17,7 @@ final readonly class OrderRepository implements OrderRepositoryInterface
 
     public function add(Order $order): Order
     {
-        $orderEntity = $this->orderMapper->createEntityFromAggregate(
-            $order,
-            $order->buyerId ? $this->em->getReference(BuyerEntity::class, $order->buyerId) : null,
-            $order->paymentMethodId ? $this->em->getReference(PaymentMethodEntity::class, $order->paymentMethodId) : null,
-        );
+        $orderEntity = $this->orderMapper->createEntityFromAggregate($order);
 
         $this->save($orderEntity);
 
@@ -39,12 +33,7 @@ final readonly class OrderRepository implements OrderRepositoryInterface
             throw new \Exception('There is no entity with this ID in the Doctrine.');
         }
 
-        $this->orderMapper->updateEntityFromAggregate(
-            $orderEntity,
-            $order,
-            $order->buyerId ? $this->em->getReference(BuyerEntity::class, $order->buyerId) : null,
-            $order->paymentMethodId ? $this->em->getReference(PaymentMethodEntity::class, $order->paymentMethodId) : null,
-        );
+        $this->orderMapper->updateEntityFromAggregate($orderEntity, $order);
 
         $this->save($orderEntity);
 

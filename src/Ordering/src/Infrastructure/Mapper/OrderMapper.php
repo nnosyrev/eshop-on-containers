@@ -6,28 +6,25 @@ use App\Domain\Aggregate\Order\Order;
 use App\Infrastructure\ORM\Entity\BuyerEntity;
 use App\Infrastructure\ORM\Entity\OrderEntity;
 use App\Infrastructure\ORM\Entity\PaymentMethodEntity;
+use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 
 final readonly class OrderMapper
 {
     public function __construct(
+        private EntityManagerInterface $em,
         private OrderItemMapper $orderItemMapper,
         private AddressMapper $addressMapper,
     ) {}
 
-    public function createEntityFromAggregate(Order $order, ?BuyerEntity $buyerEntity, ?PaymentMethodEntity $paymentMethodEntity): OrderEntity
+    public function createEntityFromAggregate(Order $order): OrderEntity
     {
         $orderEntity = new OrderEntity()
-            ->setId($order->id)
-            ->setOrderDate($order->orderDate)
-            ->setOrderStatus($order->orderStatus)
-            ->setDescription($order->description)
-            ->setAddress($this->addressMapper->createEntityFromAggregate($order->address))
-            ->setBuyer($buyerEntity)
-            ->setPaymentMethod($paymentMethodEntity)
-        ;
+            ->setId($order->id);
 
-        foreach ($order->getOrderItems() as $orderItem) {
+        $this->doUpdateEntityFromAggregate($orderEntity, $order);
+
+        foreach ($order->orderItems as $orderItem) {
             $orderItemEntity = $this->orderItemMapper->createEntityFromAggregate($orderItem, $orderEntity);
 
             $orderEntity->addOrderItem($orderItemEntity);
@@ -36,18 +33,11 @@ final readonly class OrderMapper
         return $orderEntity;
     }
 
-    public function updateEntityFromAggregate(OrderEntity $orderEntity, Order $order, ?BuyerEntity $buyerEntity, ?PaymentMethodEntity $paymentMethodEntity): void
+    public function updateEntityFromAggregate(OrderEntity $orderEntity, Order $order): void
     {
-        $orderEntity
-            ->setOrderDate($order->orderDate)
-            ->setOrderStatus($order->orderStatus)
-            ->setDescription($order->description)
-            ->setAddress($this->addressMapper->createEntityFromAggregate($order->address))
-            ->setBuyer($buyerEntity)
-            ->setPaymentMethod($paymentMethodEntity)
-        ;
+        $this->doUpdateEntityFromAggregate($orderEntity, $order);
 
-        foreach ($order->getOrderItems() as $orderItem) {
+        foreach ($order->orderItems as $orderItem) {
             if (!empty($orderItem->id)) {
                 foreach ($orderEntity->getOrderItems() as $orderItemEntity) {
                     if ($orderItem->id === $orderItemEntity->getId()) {
@@ -60,6 +50,18 @@ final readonly class OrderMapper
                 $orderEntity->addOrderItem($orderItemEntity);
             }
         }
+    }
+
+    private function doUpdateEntityFromAggregate(OrderEntity $orderEntity, Order $order): void
+    {
+        $orderEntity
+            ->setOrderDate($order->orderDate)
+            ->setOrderStatus($order->orderStatus)
+            ->setDescription($order->description)
+            ->setAddress($this->addressMapper->createEntityFromAggregate($order->address))
+            ->setBuyer($order->buyerId ? $this->em->getReference(BuyerEntity::class, $order->buyerId) : null)
+            ->setPaymentMethod($order->paymentMethodId ? $this->em->getReference(PaymentMethodEntity::class, $order->paymentMethodId) : null)
+        ;
     }
 
     public function createAggregateFromEntity(OrderEntity $orderEntity): Order
