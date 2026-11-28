@@ -16,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
@@ -25,6 +26,7 @@ final class OrderController extends AbstractController
 {
     public function __construct(
         private readonly OrderQueriesInterface $orderQueries,
+        private readonly MessageBusInterface $commandBus,
         private readonly DenormalizerInterface $denormalizer,
     ) {}
 
@@ -90,12 +92,9 @@ final class OrderController extends AbstractController
         response: 200,
         description: 'The order has been created'
     )]
-    public function createOrder(
-        #[MapRequestPayload] CreateOrderCommand $command,
-        CreateOrderCommandHandler $createOrderCommandHandler,
-    ): Response
+    public function createOrder(#[MapRequestPayload] CreateOrderCommand $createOrderCommand): Response
     {
-        $createOrderCommandHandler->handle($command);
+        $this->commandBus->dispatch($createOrderCommand);
 
         return new Response(status: 200);
     }
@@ -108,12 +107,9 @@ final class OrderController extends AbstractController
         response: 200,
         description: 'The order has been shipped'
     )]
-    public function shipOrder(
-        #[MapRequestPayload] ShipOrderCommand $command,
-        ShipOrderCommandHandler $shipOrderCommandHandler,
-    ): Response
+    public function shipOrder(#[MapRequestPayload] ShipOrderCommand $shipOrderCommand): Response
     {
-        $shipOrderCommandHandler->handle($command);
+        $this->commandBus->dispatch($shipOrderCommand);
 
         return new Response(status: 200);
     }

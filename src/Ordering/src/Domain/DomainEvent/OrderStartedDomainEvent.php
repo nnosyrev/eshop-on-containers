@@ -3,7 +3,6 @@
 namespace App\Domain\DomainEvent;
 
 use App\Domain\Aggregate\Order\Order;
-use DateTime;
 use DateTimeImmutable;
 
 /**

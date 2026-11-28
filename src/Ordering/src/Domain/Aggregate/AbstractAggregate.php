@@ -6,7 +6,7 @@ abstract class AbstractAggregate
 {
     public protected(set) ?int $id = null;
 
-    protected array $domainEvents = [];
+    public protected(set) array $domainEvents = [];
 
     public function addDomainEvent($domainEvent): void
     {
